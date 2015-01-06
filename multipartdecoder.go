@@ -12,8 +12,11 @@ import (
 )
 
 // NewDecoder returns a new Decoder.
-func NewMultipartDecoder() *MultipartDecoder {
-	return &MultipartDecoder{Decoder: Decoder{cache: newCache()}}
+func NewMultipartDecoder(decoder *Decoder) *MultipartDecoder {
+	if decoder == nil {
+		decoder = &Decoder{cache: newCache()}
+	}
+	return &MultipartDecoder{Decoder: *decoder}
 }
 
 // Decoder decodes values from a map[string][]string to a struct.

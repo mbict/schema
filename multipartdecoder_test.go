@@ -33,7 +33,7 @@ func (s *multipartDecoder) Test_SingleFile(c *C) {
 				data:      "Whoohoo yippie yeey lol :)",
 			},
 		}, &expectedBlogpost)
-	decoder := NewMultipartDecoder()
+	decoder := NewMultipartDecoder(nil)
 	decoder.IgnoreUnknownKeys(true)
 	err := decoder.Decode(&blogPost, mf)
 
@@ -70,7 +70,7 @@ func (s *multipartDecoder) Test_MultipleFiles(c *C) {
 		},
 	}, &expectedBlogpost)
 
-	decoder := NewMultipartDecoder()
+	decoder := NewMultipartDecoder(nil)
 	decoder.IgnoreUnknownKeys(true)
 	err := decoder.Decode(&blogPost, mf)
 
@@ -107,7 +107,7 @@ func (s *multipartDecoder) Test_SingleFileAndMultipleFiles(c *C) {
 		},
 	}, nil)
 
-	decoder := NewMultipartDecoder()
+	decoder := NewMultipartDecoder(nil)
 	decoder.IgnoreUnknownKeys(true)
 	err := decoder.Decode(&blogPost, mf)
 

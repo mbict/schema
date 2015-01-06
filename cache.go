@@ -6,6 +6,7 @@ package schema
 
 import (
 	"errors"
+	"mime/multipart"
 	"reflect"
 	"strconv"
 	"strings"
@@ -137,6 +138,8 @@ func (c *cache) create(t reflect.Type, info *structInfo) *structInfo {
 	return info
 }
 
+var multipartFileheaderType = reflect.TypeOf(multipart.FileHeader{})
+
 // createField creates a fieldInfo for the given field.
 func (c *cache) createField(field reflect.StructField, info *structInfo) {
 	alias := fieldAlias(field, c.tag)
@@ -146,7 +149,7 @@ func (c *cache) createField(field reflect.StructField, info *structInfo) {
 	}
 	// Check if the type is supported and don't cache it if not.
 	// First let's get the basic type.
-	isSlice, isStruct := false, false
+	isSlice, isStruct, isFileheader := false, false, false
 	ft := field.Type
 	if ft.Kind() == reflect.Ptr {
 		ft = ft.Elem()
@@ -164,10 +167,13 @@ func (c *cache) createField(field reflect.StructField, info *structInfo) {
 		}
 	}
 
+	//for multipart files we dont threat them as slice structures
+	isFileheader = ft == multipartFileheaderType
+
 	info.fields = append(info.fields, &fieldInfo{
 		typ:   field.Type,
 		name:  field.Name,
-		ss:    isSlice && isStruct,
+		ss:    isSlice && isStruct && !isFileheader,
 		alias: alias,
 	})
 }
